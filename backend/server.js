@@ -5,8 +5,12 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+// Initialize Firebase
+const { initializeFirebase } = require('./firebase/config');
+
 const voiceRoutes = require('./routes/voice');
 const exerciseRoutes = require('./routes/exercises');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,8 +20,8 @@ app.use(helmet());
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.com'] 
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://your-frontend-domain.com']
     : ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true
 }));
@@ -39,14 +43,23 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV 
+    environment: process.env.NODE_ENV
   });
 });
 
+// Initialize Firebase before routes
+try {
+  initializeFirebase();
+} catch (error) {
+  console.error('Failed to initialize Firebase:', error);
+  process.exit(1);
+}
+
 // API routes
+app.use('/api/auth', authRoutes);
 app.use('/api/voice', voiceRoutes);
 app.use('/api/exercises', exerciseRoutes);
 
@@ -58,15 +71,15 @@ app.use('*', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  
+
   if (err.name === 'ValidationError') {
     return res.status(400).json({ error: err.message });
   }
-  
+
   if (err.name === 'OpenAIError') {
     return res.status(500).json({ error: 'AI service temporarily unavailable' });
   }
-  
+
   res.status(500).json({ error: 'Internal server error' });
 });
 
