@@ -14,6 +14,14 @@
 		1269636D2E3CCC4300AA4003 /* fitness_ios_appTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1269636C2E3CCC4300AA4003 /* fitness_ios_appTests.swift */; };
 		126963772E3CCC4300AA4003 /* fitness_ios_appUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126963762E3CCC4300AA4003 /* fitness_ios_appUITests.swift */; };
 		126963792E3CCC4300AA4003 /* fitness_ios_appUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126963782E3CCC4300AA4003 /* fitness_ios_appUITestsLaunchTests.swift */; };
+		126963872E3CDC4800AA4003 /* SwiftWhisper in Frameworks */ = {isa = PBXBuildFile; productRef = 126963862E3CDC4800AA4003 /* SwiftWhisper */; };
+		1269638A2E3CDE6F00AA4003 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126963892E3CDE6F00AA4003 /* AudioKit */; };
+		126963902E3CE6B500AA4003 /* AudioProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1269638F2E3CE6B500AA4003 /* AudioProcessor.swift */; };
+		126963922E3CE6C500AA4003 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126963912E3CE6C500AA4003 /* AudioRecorder.swift */; };
+		126963942E3CE6D300AA4003 /* model.mil in Resources */ = {isa = PBXBuildFile; fileRef = 126963932E3CE6D300AA4003 /* model.mil */; };
+		126963962E3CE6DE00AA4003 /* tiny.bin in Resources */ = {isa = PBXBuildFile; fileRef = 126963952E3CE6DE00AA4003 /* tiny.bin */; };
+		126963982E3CE6EA00AA4003 /* VoiceRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126963972E3CE6EA00AA4003 /* VoiceRecordingView.swift */; };
+		1269639A2E3CE6FF00AA4003 /* WhisperTranscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126963992E3CE6FF00AA4003 /* WhisperTranscriber.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +52,12 @@
 		126963722E3CCC4300AA4003 /* fitness-ios-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "fitness-ios-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		126963762E3CCC4300AA4003 /* fitness_ios_appUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fitness_ios_appUITests.swift; sourceTree = "<group>"; };
 		126963782E3CCC4300AA4003 /* fitness_ios_appUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fitness_ios_appUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		1269638F2E3CE6B500AA4003 /* AudioProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioProcessor.swift; sourceTree = "<group>"; };
+		126963912E3CE6C500AA4003 /* AudioRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		126963932E3CE6D300AA4003 /* model.mil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = model.mil; sourceTree = "<group>"; };
+		126963952E3CE6DE00AA4003 /* tiny.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = tiny.bin; sourceTree = "<group>"; };
+		126963972E3CE6EA00AA4003 /* VoiceRecordingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceRecordingView.swift; sourceTree = "<group>"; };
+		126963992E3CE6FF00AA4003 /* WhisperTranscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhisperTranscriber.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +65,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1269638A2E3CDE6F00AA4003 /* AudioKit in Frameworks */,
+				126963872E3CDC4800AA4003 /* SwiftWhisper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,6 +112,12 @@
 			children = (
 				1269635B2E3CCC4000AA4003 /* fitness_ios_appApp.swift */,
 				1269635D2E3CCC4000AA4003 /* ContentView.swift */,
+				126963992E3CE6FF00AA4003 /* WhisperTranscriber.swift */,
+				126963972E3CE6EA00AA4003 /* VoiceRecordingView.swift */,
+				126963952E3CE6DE00AA4003 /* tiny.bin */,
+				126963932E3CE6D300AA4003 /* model.mil */,
+				126963912E3CE6C500AA4003 /* AudioRecorder.swift */,
+				1269638F2E3CE6B500AA4003 /* AudioProcessor.swift */,
 				1269635F2E3CCC4300AA4003 /* Assets.xcassets */,
 				126963612E3CCC4300AA4003 /* Preview Content */,
 			);
@@ -143,6 +165,10 @@
 			dependencies = (
 			);
 			name = "fitness-ios-app";
+			packageProductDependencies = (
+				126963862E3CDC4800AA4003 /* SwiftWhisper */,
+				126963892E3CDE6F00AA4003 /* AudioKit */,
+			);
 			productName = "fitness-ios-app";
 			productReference = 126963582E3CCC4000AA4003 /* fitness-ios-app.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +241,10 @@
 				Base,
 			);
 			mainGroup = 1269634F2E3CCC4000AA4003;
+			packageReferences = (
+				126963852E3CDC4800AA4003 /* XCRemoteSwiftPackageReference "SwiftWhisper" */,
+				126963882E3CDE6F00AA4003 /* XCRemoteSwiftPackageReference "AudioKit" */,
+			);
 			productRefGroup = 126963592E3CCC4000AA4003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -233,6 +263,8 @@
 			files = (
 				126963632E3CCC4300AA4003 /* Preview Assets.xcassets in Resources */,
 				126963602E3CCC4300AA4003 /* Assets.xcassets in Resources */,
+				126963942E3CE6D300AA4003 /* model.mil in Resources */,
+				126963962E3CE6DE00AA4003 /* tiny.bin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,6 +291,10 @@
 			files = (
 				1269635E2E3CCC4000AA4003 /* ContentView.swift in Sources */,
 				1269635C2E3CCC4000AA4003 /* fitness_ios_appApp.swift in Sources */,
+				126963922E3CE6C500AA4003 /* AudioRecorder.swift in Sources */,
+				126963982E3CE6EA00AA4003 /* VoiceRecordingView.swift in Sources */,
+				1269639A2E3CE6FF00AA4003 /* WhisperTranscriber.swift in Sources */,
+				126963902E3CE6B500AA4003 /* AudioProcessor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,6 +461,7 @@
 				DEVELOPMENT_TEAM = HQKNJY9XYD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record your voice for exercise transcription.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -454,6 +491,7 @@
 				DEVELOPMENT_TEAM = HQKNJY9XYD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record your voice for exercise transcription.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -588,6 +626,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		126963852E3CDC4800AA4003 /* XCRemoteSwiftPackageReference "SwiftWhisper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exPHAT/SwiftWhisper.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+		126963882E3CDE6F00AA4003 /* XCRemoteSwiftPackageReference "AudioKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/AudioKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.6.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		126963862E3CDC4800AA4003 /* SwiftWhisper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 126963852E3CDC4800AA4003 /* XCRemoteSwiftPackageReference "SwiftWhisper" */;
+			productName = SwiftWhisper;
+		};
+		126963892E3CDE6F00AA4003 /* AudioKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 126963882E3CDE6F00AA4003 /* XCRemoteSwiftPackageReference "AudioKit" */;
+			productName = AudioKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 126963502E3CCC4000AA4003 /* Project object */;
 }
