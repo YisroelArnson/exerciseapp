@@ -1,15 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { processCommand } = require('../services/voiceService');
-const { validateVoiceInput } = require('../middleware/validation');
-const { optionalAuth } = require('../middleware/auth');
 
 /**
  * @route POST /api/voice/process
  * @desc Process voice command and log exercise
  * @access Public (optionally authenticated for better user experience)
  */
-router.post('/process', optionalAuth, validateVoiceInput, async (req, res, next) => {
+router.post('/process', async (req, res, next) => {
   try {
     const { voiceCommand } = req.body;
     const userId = req.user?.uid || 'demo-user'; // Use authenticated user ID or fallback

@@ -45,9 +45,7 @@ The app delivers on this promise by allowing users to simply speak to it — and
 
 ### 🔌 3rd Party & Native Integrations
 
-- **GPS / Motion:** CoreLocation, HealthKit
 - **Audio Streaming:** ReplayKit + audio session handling
-- **Data Sync:** Firebase or WebSocket for real-time updates
 
 ---
 
@@ -78,17 +76,6 @@ The app delivers on this promise by allowing users to simply speak to it — and
 - Ask exercise form questions
 - Receive step-by-step audio/visual feedback
 
----
-
-## 🎨 5. UI / UX Design
-
-- Interaction:
-    - Voice + text entry
-    - Output: voice, ping, text, or silent mode
-- Music playback support
-    - Auto-ducking with wake word (e.g., “Hey FitBot”)
-
----
 
 ## 📈 7. Success Metrics
 

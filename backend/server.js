@@ -9,8 +9,7 @@ require('dotenv').config();
 const { initializeFirebase } = require('./firebase/config');
 
 const voiceRoutes = require('./routes/voice');
-const exerciseRoutes = require('./routes/exercises');
-const authRoutes = require('./routes/auth');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,14 +40,6 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV
-  });
-});
 
 // Initialize Firebase before routes
 try {
@@ -57,11 +48,6 @@ try {
   console.error('Failed to initialize Firebase:', error);
   process.exit(1);
 }
-
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/voice', voiceRoutes);
-app.use('/api/exercises', exerciseRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -76,18 +62,11 @@ app.use((err, req, res, next) => {
     return res.status(400).json({ error: err.message });
   }
 
-  if (err.name === 'OpenAIError') {
-    return res.status(500).json({ error: 'AI service temporarily unavailable' });
-  }
-
   res.status(500).json({ error: 'Internal server error' });
 });
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`🎤 Voice API: http://localhost:${PORT}/api/voice`);
-  console.log(`💪 Exercise API: http://localhost:${PORT}/api/exercises`);
 });
 
 module.exports = app; 
