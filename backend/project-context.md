@@ -28,24 +28,20 @@ The app delivers on this promise by allowing users to simply speak to it — and
 
 - **Language:** Swift
 - **UI Framework:** SwiftUI
-- **Voice Interaction:** SiriKit, AVFoundation, wake-word detection (e.g., Picovoice)
-- **Audio Feedback:** AVSpeechSynthesizer, haptics, visual pings
-- **Local LLM Tools:** `llama.cpp`, `whisper.cpp` for on-device transcription and parsing
+- **Voice Interaction:** unknown
+- **Audio Feedback:** text-to-speech, haptics, visual pings
+- **Local LLM Tools:** for on-device transcription and parsing
 
 ### 🖥️ Backend
 
 - **Runtime:** Node.js (JavaScript, no TypeScript)
 - **Framework:** Express.js
 - **Database:** Firebase (document-based schema for logs, users, plans)
-- **Authentication:** Firebase Auth
+- **Authentication:** JWT or Firebase Auth (for Apple ID integration)
 - **AI Integration:**
     - OpenAI / OpenRouter for advanced LLM tasks
     - Local models for simple parsing/transcription
     - Tool-use for structured JSON generation from prompts
-
-### 🔌 3rd Party & Native Integrations
-
-- **Audio Streaming:** ReplayKit + audio session handling
 
 ---
 
@@ -76,6 +72,17 @@ The app delivers on this promise by allowing users to simply speak to it — and
 - Ask exercise form questions
 - Receive step-by-step audio/visual feedback
 
+---
+
+## 🎨 5. UI / UX Design
+
+- Interaction:
+    - Voice + text entry
+    - Output: voice, ping, text, or silent mode
+- Music playback support
+    - Auto-ducking with wake word (e.g., “Hey FitBot”)
+
+---
 
 ## 📈 7. Success Metrics
 
