@@ -49,6 +49,11 @@ try {
   process.exit(1);
 }
 
+// Routes
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
+app.use('/api/voice', voiceRoutes);
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
