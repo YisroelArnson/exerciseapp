@@ -23,6 +23,7 @@
 		126963A92E3D40B100AA4003 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126963A82E3D40B100AA4003 /* AudioKit */; };
 		126963AC2E3D40BC00AA4003 /* SwiftWhisper in Frameworks */ = {isa = PBXBuildFile; productRef = 126963AB2E3D40BC00AA4003 /* SwiftWhisper */; };
 		126963AE2E41181E00AA4003 /* SpeechAnalyzerTranscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126963AD2E41181E00AA4003 /* SpeechAnalyzerTranscriber.swift */; };
+		126963B12E4125BB00AA4003 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 126963B02E4125BB00AA4003 /* WhisperKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				126963B12E4125BB00AA4003 /* WhisperKit in Frameworks */,
 				126963A92E3D40B100AA4003 /* AudioKit in Frameworks */,
 				126963AC2E3D40BC00AA4003 /* SwiftWhisper in Frameworks */,
 			);
@@ -171,6 +173,7 @@
 			packageProductDependencies = (
 				126963A82E3D40B100AA4003 /* AudioKit */,
 				126963AB2E3D40BC00AA4003 /* SwiftWhisper */,
+				126963B02E4125BB00AA4003 /* WhisperKit */,
 			);
 			productName = "fitness-ios-app";
 			productReference = 126963582E3CCC4000AA4003 /* fitness-ios-app.app */;
@@ -247,6 +250,7 @@
 			packageReferences = (
 				126963A72E3D40B100AA4003 /* XCRemoteSwiftPackageReference "AudioKit" */,
 				126963AA2E3D40BC00AA4003 /* XCRemoteSwiftPackageReference "SwiftWhisper" */,
+				126963AF2E4125BB00AA4003 /* XCRemoteSwiftPackageReference "whisperkit" */,
 			);
 			productRefGroup = 126963592E3CCC4000AA4003 /* Products */;
 			projectDirPath = "";
@@ -650,6 +654,14 @@
 				minimumVersion = 1.2.0;
 			};
 		};
+		126963AF2E4125BB00AA4003 /* XCRemoteSwiftPackageReference "whisperkit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/argmaxinc/whisperkit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -662,6 +674,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 126963AA2E3D40BC00AA4003 /* XCRemoteSwiftPackageReference "SwiftWhisper" */;
 			productName = SwiftWhisper;
+		};
+		126963B02E4125BB00AA4003 /* WhisperKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 126963AF2E4125BB00AA4003 /* XCRemoteSwiftPackageReference "whisperkit" */;
+			productName = WhisperKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

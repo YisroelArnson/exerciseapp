@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import WhisperKit
 
 struct VoiceRecordingView: View {
     @StateObject private var speechTranscriber: SpeechTranscriberWrapper
@@ -147,6 +148,13 @@ class SpeechTranscriberWrapper: ObservableObject {
     
     func startLiveTranscription() {
         optimizedTranscriber?.startLiveTranscription()
+        
+        // Initialize WhisperKit with default settings
+        Task {
+            let pipe = try? await WhisperKit()
+            let transcription = try? await pipe!.transcribe(audioPath: "path/to/your/audio.{wav,mp3,m4a,flac}")?.text
+            print(transcription)
+        }
     }
     
     func stopLiveTranscription() {
