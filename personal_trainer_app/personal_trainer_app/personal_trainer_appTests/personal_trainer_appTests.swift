@@ -1,14 +1,14 @@
 //
-//  fitness_ios_appTests.swift
-//  fitness-ios-appTests
+//  personal_trainer_appTests.swift
+//  personal_trainer_appTests
 //
-//  Created by ISWA on 8/1/25.
+//  Created by ISWA on 8/7/25.
 //
 
 import XCTest
-@testable import fitness_ios_app
+@testable import personal_trainer_app
 
-final class fitness_ios_appTests: XCTestCase {
+final class personal_trainer_appTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

@@ -1,13 +1,13 @@
 //
-//  fitness_ios_appUITestsLaunchTests.swift
-//  fitness-ios-appUITests
+//  personal_trainer_appUITestsLaunchTests.swift
+//  personal_trainer_appUITests
 //
-//  Created by ISWA on 8/1/25.
+//  Created by ISWA on 8/7/25.
 //
 
 import XCTest
 
-final class fitness_ios_appUITestsLaunchTests: XCTestCase {
+final class personal_trainer_appUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
