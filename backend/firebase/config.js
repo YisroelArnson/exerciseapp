@@ -2,73 +2,34 @@ const admin = require('firebase-admin');
 const fs = require('fs');
 const path = require('path');
 
-// Initialize Firebase Admin SDK
-let firebaseApp;
+function initializeFirebase() {
+  if (admin.apps.length > 0) {
+    return admin.app();
+  }
 
-const initializeFirebase = () => {
-    if (!firebaseApp) {
-        try {
-            // For production: Use service account key file
-            if (process.env.NODE_ENV === 'production' && process.env.FIREBASE_SERVICE_ACCOUNT) {
-                const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-                firebaseApp = admin.initializeApp({
-                    credential: admin.credential.cert(serviceAccount),
-                    projectId: serviceAccount.project_id,
-                    databaseURL: process.env.FIREBASE_DATABASE_URL
-                });
-            }
-            // For development: Use service account key file
-            else if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
-                // Resolve path relative to the backend directory (parent of firebase directory)
-                const backendDir = path.dirname(__dirname);
-                const serviceAccountPath = path.resolve(backendDir, process.env.FIREBASE_SERVICE_ACCOUNT_PATH);
+  const serviceAccountPath = path.resolve(__dirname, 'FIREBASE_SERVICE_ACCOUNT.json');
+  if (!fs.existsSync(serviceAccountPath)) {
+    throw new Error(`Service account file not found at: ${serviceAccountPath}`);
+  }
 
-                console.log('🔍 Looking for service account file at:', serviceAccountPath);
+  const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
 
-                if (!fs.existsSync(serviceAccountPath)) {
-                    throw new Error(`Service account file not found at: ${serviceAccountPath}`);
-                }
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
 
-                const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
-                console.log('✅ Service account loaded successfully for project:', serviceAccount.project_id);
+  console.log('Firebase Admin SDK initialized (service account file)');
+  return admin.app();
+}
 
-                firebaseApp = admin.initializeApp({
-                    credential: admin.credential.cert(serviceAccount),
-                    projectId: serviceAccount.project_id,
-                    databaseURL: process.env.FIREBASE_DATABASE_URL
-                });
-            }
-            // Fallback: Use default credentials (when deployed to Firebase Functions)
-            else {
-                console.log('⚠️ Using default credentials (fallback mode)');
-                firebaseApp = admin.initializeApp({
-                    projectId: 'exerciseapp-b4f9d' // Fallback project ID
-                });
-            }
+function getAuth() {
+  const app = initializeFirebase();
+  return admin.auth(app);
+}
 
-            console.log('🔥 Firebase Admin SDK initialized successfully');
-        } catch (error) {
-            console.error('❌ Error initializing Firebase:', error);
-            throw error;
-        }
-    }
-    return firebaseApp;
-};
+function getFirestore() {
+  const app = initializeFirebase();
+  return admin.firestore(app);
+}
 
-// Get Firebase services
-const getAuth = () => {
-    const app = initializeFirebase();
-    return admin.auth(app);
-};
-
-const getFirestore = () => {
-    const app = initializeFirebase();
-    return admin.firestore(app);
-};
-
-module.exports = {
-    initializeFirebase,
-    getAuth,
-    getFirestore,
-    admin
-}; 
+module.exports = { initializeFirebase, getAuth, getFirestore, admin };
