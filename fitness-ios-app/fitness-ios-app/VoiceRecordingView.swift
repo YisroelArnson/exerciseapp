@@ -1,17 +1,14 @@
 import SwiftUI
 import AVFoundation
+import WhisperKit
 
 struct VoiceRecordingView: View {
-    @StateObject private var audioRecorder = AudioRecorder()
-    @StateObject private var whisperTranscriber: WhisperTranscriber
+    @StateObject private var speechTranscriber: SpeechTranscriberWrapper
     
-    @State private var isProcessing = false
     @State private var showPermissionAlert = false
-    @State private var lastRecordingURL: URL?
     
     init() {
-        let transcriber = WhisperTranscriber() ?? WhisperTranscriber(createDummy: true)
-        _whisperTranscriber = StateObject(wrappedValue: transcriber)
+        _speechTranscriber = StateObject(wrappedValue: SpeechTranscriberWrapper())
     }
     
     var body: some View {
@@ -26,11 +23,11 @@ struct VoiceRecordingView: View {
                 Button(action: toggleRecording) {
                     ZStack {
                         Circle()
-                            .fill(audioRecorder.isRecording ? Color.red : Color.blue)
+                            .fill(speechTranscriber.isListening ? Color.red : Color.blue)
                             .frame(width: 80, height: 80)
-                            .shadow(color: (audioRecorder.isRecording ? Color.red : Color.blue).opacity(0.3), radius: 10, x: 0, y: 5)
+                            .shadow(color: (speechTranscriber.isListening ? Color.red : Color.blue).opacity(0.3), radius: 10, x: 0, y: 5)
                         
-                        if audioRecorder.isRecording {
+                        if speechTranscriber.isListening {
                             Image(systemName: "stop.fill")
                                 .font(.title)
                                 .foregroundColor(.white)
@@ -41,43 +38,40 @@ struct VoiceRecordingView: View {
                         }
                     }
                 }
-                .scaleEffect(audioRecorder.isRecording ? 1.1 : 1.0)
-                .animation(.easeInOut(duration: 0.2), value: audioRecorder.isRecording)
+                .scaleEffect(speechTranscriber.isListening ? 1.1 : 1.0)
+                .animation(.easeInOut(duration: 0.2), value: speechTranscriber.isListening)
                 
                 // Status Text
-                if isProcessing {
-                    ProgressView("Processing audio...")
-                        .padding()
-                } else if whisperTranscriber.isTranscribing {
+                if speechTranscriber.isTranscribing {
                     VStack(spacing: 8) {
                         ProgressView()
                             .scaleEffect(0.8)
-                        Text(whisperTranscriber.progressMessage.isEmpty ? "Transcribing..." : whisperTranscriber.progressMessage)
+                        Text("Listening and transcribing...")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
                     .padding()
-                } else if let errorMessage = audioRecorder.errorMessage ?? whisperTranscriber.errorMessage {
+                } else if let errorMessage = speechTranscriber.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.caption)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 } else {
-                    Text(audioRecorder.isRecording ? "Listening..." : "Tap to start recording")
+                    Text(speechTranscriber.isListening ? "Listening..." : "Tap to start recording")
                         .font(.headline)
                         .foregroundColor(.gray)
                 }
                 
-                // Transcription Display
-                if !whisperTranscriber.transcription.isEmpty {
+                // Live Transcription Display
+                if !speechTranscriber.transcription.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Transcription:")
+                        Text("Live Transcription:")
                             .font(.headline)
                             .padding(.horizontal)
                         
                         ScrollView {
-                            Text(whisperTranscriber.transcription)
+                            Text(speechTranscriber.transcription)
                                 .font(.body)
                                 .padding()
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -92,24 +86,11 @@ struct VoiceRecordingView: View {
                 Spacer()
                 
                 // Clear Button
-                if !whisperTranscriber.transcription.isEmpty {
-                    VStack(spacing: 12) {
-                        Button("Clear Transcription") {
-                            whisperTranscriber.clearTranscription()
-                            if let url = lastRecordingURL {
-                                try? FileManager.default.removeItem(at: url)
-                                lastRecordingURL = nil
-                            }
-                        }
-                        .foregroundColor(.red)
-                        
-                        // Performance test button (for debugging)
-                        Button("Test Performance") {
-                            testPerformance()
-                        }
-                        .foregroundColor(.blue)
-                        .font(.caption)
+                if !speechTranscriber.transcription.isEmpty {
+                    Button("Clear Transcription") {
+                        speechTranscriber.clearTranscription()
                     }
+                    .foregroundColor(.red)
                     .padding(.bottom)
                 }
             }
@@ -122,76 +103,66 @@ struct VoiceRecordingView: View {
     }
     
     private func toggleRecording() {
-        if audioRecorder.isRecording {
-            stopRecording()
+        if speechTranscriber.isListening {
+            speechTranscriber.stopLiveTranscription()
         } else {
-            startRecording()
+            speechTranscriber.startLiveTranscription()
         }
     }
+}
+
+// Wrapper class to handle iOS version compatibility
+class SpeechTranscriberWrapper: ObservableObject {
+    @Published var isTranscribing = false
+    @Published var transcription: String = ""
+    @Published var errorMessage: String?
+    @Published var isListening = false
+    @Published var confidence: Float = 0.0
+    @Published var isFinal: Bool = false
     
-    private func startRecording() {
-        if audioRecorder.startRecording() {
-            // Recording started successfully
-            whisperTranscriber.clearTranscription()
-            if let url = lastRecordingURL {
-                try? FileManager.default.removeItem(at: url)
-                lastRecordingURL = nil
-            }
-        } else if let errorMessage = audioRecorder.errorMessage, errorMessage.contains("denied") {
-            showPermissionAlert = true
-        }
+    private var optimizedTranscriber: OptimizedSpeechTranscriber?
+    private var legacyTranscriber: LegacySpeechTranscriber?
+    
+    init() {
+        // Use the optimized transcriber for all iOS versions
+        optimizedTranscriber = OptimizedSpeechTranscriber()
+        setupOptimizedBindings()
     }
     
-    private func stopRecording() {
-        guard let recordingURL = audioRecorder.stopRecording() else {
-            return
-        }
+    private func setupOptimizedBindings() {
+        guard let transcriber = optimizedTranscriber else { return }
         
-        lastRecordingURL = recordingURL
-        isProcessing = true
+        transcriber.$isTranscribing
+            .assign(to: &$isTranscribing)
+        transcriber.$transcription
+            .assign(to: &$transcription)
+        transcriber.$errorMessage
+            .assign(to: &$errorMessage)
+        transcriber.$isListening
+            .assign(to: &$isListening)
+        transcriber.$confidence
+            .assign(to: &$confidence)
+        transcriber.$isFinal
+            .assign(to: &$isFinal)
+    }
+    
+    func startLiveTranscription() {
+        optimizedTranscriber?.startLiveTranscription()
         
+        // Initialize WhisperKit with default settings
         Task {
-            // Add a small delay to show processing state
-            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
-            
-            await whisperTranscriber.transcribeAudio(recordingURL)
-            
-            await MainActor.run {
-                isProcessing = false
-            }
+            let pipe = try? await WhisperKit()
+            let transcription = try? await pipe!.transcribe(audioPath: "path/to/your/audio.{wav,mp3,m4a,flac}")?.text
+            print(transcription)
         }
     }
     
-    private func testPerformance() {
-        guard let url = lastRecordingURL else { return }
-        
-        Task {
-            let startTime = Date()
-            print("=== PERFORMANCE TEST START ===")
-            
-            // Test audio processing only
-            do {
-                let pcmData = try await AudioProcessor.prepareAudioForWhisper(audioURL: url)
-                let audioTime = Date().timeIntervalSince(startTime)
-                print("Audio processing time: \(audioTime) seconds")
-                print("PCM samples: \(pcmData.count)")
-                
-                // Test Whisper only
-                let whisperStart = Date()
-                if let whisper = whisperTranscriber.whisper {
-                    let segments = try await whisper.transcribe(audioFrames: pcmData)
-                    let whisperTime = Date().timeIntervalSince(whisperStart)
-                    print("Whisper processing time: \(whisperTime) seconds")
-                }
-                
-                let totalTime = Date().timeIntervalSince(startTime)
-                print("Total test time: \(totalTime) seconds")
-                print("=== PERFORMANCE TEST END ===")
-                
-            } catch {
-                print("Performance test failed: \(error)")
-            }
-        }
+    func stopLiveTranscription() {
+        optimizedTranscriber?.stopLiveTranscription()
+    }
+    
+    func clearTranscription() {
+        optimizedTranscriber?.clearTranscription()
     }
 }
 
