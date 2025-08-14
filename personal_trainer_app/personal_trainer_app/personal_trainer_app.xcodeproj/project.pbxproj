@@ -14,6 +14,8 @@
 		12E8BB3E2E4561B000FD339C /* personal_trainer_appTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E8BB3D2E4561B000FD339C /* personal_trainer_appTests.swift */; };
 		12E8BB482E4561B000FD339C /* personal_trainer_appUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E8BB472E4561B000FD339C /* personal_trainer_appUITests.swift */; };
 		12E8BB4A2E4561B000FD339C /* personal_trainer_appUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E8BB492E4561B000FD339C /* personal_trainer_appUITestsLaunchTests.swift */; };
+		12E8BB572E4565FF00FD339C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 12E8BB562E4565FF00FD339C /* GoogleService-Info.plist */; };
+		12E8BB5B2E456E8D00FD339C /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 12E8BB5A2E456E8D00FD339C /* FirebaseCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,7 @@
 		12E8BB432E4561B000FD339C /* personal_trainer_appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = personal_trainer_appUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		12E8BB472E4561B000FD339C /* personal_trainer_appUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = personal_trainer_appUITests.swift; sourceTree = "<group>"; };
 		12E8BB492E4561B000FD339C /* personal_trainer_appUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = personal_trainer_appUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		12E8BB562E4565FF00FD339C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12E8BB5B2E456E8D00FD339C /* FirebaseCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +82,7 @@
 				12E8BB3C2E4561B000FD339C /* personal_trainer_appTests */,
 				12E8BB462E4561B000FD339C /* personal_trainer_appUITests */,
 				12E8BB2A2E4561AC00FD339C /* Products */,
+				12E8BB592E456E8D00FD339C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,6 +99,7 @@
 		12E8BB2B2E4561AC00FD339C /* personal_trainer_app */ = {
 			isa = PBXGroup;
 			children = (
+				12E8BB562E4565FF00FD339C /* GoogleService-Info.plist */,
 				12E8BB2C2E4561AC00FD339C /* personal_trainer_appApp.swift */,
 				12E8BB2E2E4561AC00FD339C /* ContentView.swift */,
 				12E8BB302E4561B000FD339C /* Assets.xcassets */,
@@ -127,6 +133,13 @@
 			path = personal_trainer_appUITests;
 			sourceTree = "<group>";
 		};
+		12E8BB592E456E8D00FD339C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -143,6 +156,9 @@
 			dependencies = (
 			);
 			name = personal_trainer_app;
+			packageProductDependencies = (
+				12E8BB5A2E456E8D00FD339C /* FirebaseCore */,
+			);
 			productName = personal_trainer_app;
 			productReference = 12E8BB292E4561AC00FD339C /* personal_trainer_app.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +231,9 @@
 				Base,
 			);
 			mainGroup = 12E8BB202E4561AC00FD339C;
+			packageReferences = (
+				12E8BB582E4566F100FD339C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 12E8BB2A2E4561AC00FD339C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -233,6 +252,7 @@
 			files = (
 				12E8BB342E4561B000FD339C /* Preview Assets.xcassets in Resources */,
 				12E8BB312E4561B000FD339C /* Assets.xcassets in Resources */,
+				12E8BB572E4565FF00FD339C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +608,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		12E8BB582E4566F100FD339C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 11.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		12E8BB5A2E456E8D00FD339C /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 12E8BB582E4566F100FD339C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 12E8BB212E4561AC00FD339C /* Project object */;
 }

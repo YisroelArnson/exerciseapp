@@ -8,17 +8,27 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var auth: AuthViewModel
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Group {
+            if let user = auth.user {
+                VStack(spacing: 16) {
+                    Text("You're signed in")
+                        .font(.title2).bold()
+                    Text(user.email ?? "No email")
+                        .foregroundStyle(.secondary)
+                    Button("Sign Out") { auth.signOut() }
+                        .buttonStyle(.bordered)
+                }
+                .padding()
+            } else {
+                LoginView()
+            }
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView().environmentObject(AuthViewModel())
 }
