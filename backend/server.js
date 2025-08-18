@@ -3,13 +3,11 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 require('dotenv').config();
 
 // Initialize Firebase
 const { initializeFirebase } = require('./firebase/config');
-
-const voiceRoutes = require('./routes/voice');
-
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -50,9 +48,38 @@ try {
 }
 
 // Routes
-const authRoutes = require('./routes/auth');
-app.use('/api/auth', authRoutes);
-app.use('/api/voice', voiceRoutes);
+const usersRoutes = require('./routes/users');
+app.use('/api/users', usersRoutes);
+
+// Serve test client
+app.use('/test-client', helmet({
+  contentSecurityPolicy: {
+    useDefaults: false,
+    directives: {
+      "default-src": ["'self'"],
+      "base-uri": ["'self'"],
+      "font-src": ["'self'", "https:", "data:"],
+      "form-action": ["'self'"],
+      "frame-ancestors": ["'self'"],
+      "img-src": ["'self'", "data:"],
+      "object-src": ["'none'"],
+      "script-src": ["'self'", "'unsafe-inline'", "https://www.gstatic.com", "http://localhost:3000"],
+      "script-src-elem": ["'self'", "'unsafe-inline'", "https://www.gstatic.com", "http://localhost:3000"],
+      "script-src-attr": ["'none'"],
+      "style-src": ["'self'", "https:", "'unsafe-inline'"],
+      "connect-src": [
+        "'self'",
+        "http://localhost:9099",
+        "ws://localhost:9099",
+        "http://localhost:3000",
+        "https://www.googleapis.com",
+        "https://securetoken.googleapis.com",
+        "https://identitytoolkit.googleapis.com"
+      ]
+    }
+  }
+}));
+app.use('/test-client', express.static(path.join(__dirname, 'testing')));
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -73,5 +100,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
 
 module.exports = app; 
