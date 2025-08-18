@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backend Test Client</title>
+  <style>
+    body { font-family: sans-serif; margin: 24px; }
+    input, button { padding: 8px; margin: 4px 0; width: 320px; max-width: 100%; }
+    .row { margin-bottom: 12px; }
+    pre { background: #f6f8fa; padding: 12px; overflow: auto; }
+    .small { font-size: 12px; color: #555; }
+  </style>
+</head>
+<body>
+  <h2>Backend Test Client (Firebase Auth)</h2>
+  <div class="row small">Make sure your backend is running on http://localhost:3000</div>
+
+  <div class="row">
+    <button id="btnTest">Test JavaScript (Click Me First)</button>
+  </div>
+
+  <div class="row">
+    <label>Backend Base URL</label><br />
+    <input id="backendBase" type="text" value="http://localhost:3000" style="width: 640px; max-width: 100%;" />
+  </div>
+
+  <div class="row">
+    <label>Firebase Config (JSON)</label><br />
+    <textarea id="fbConfig" rows="8" style="width: 640px; max-width: 100%;">{
+      "apiKey": "demo-api-key",
+      "authDomain": "demo-project.firebaseapp.com",
+      "projectId": "demo-project"
+    }</textarea>
+  </div>
+
+  <div class="row">
+    <label>Email</label><br />
+    <input id="email" type="email" placeholder="you@example.com" />
+  </div>
+  <div class="row">
+    <label>Password</label><br />
+    <input id="password" type="password" placeholder="Your password" />
+  </div>
+
+  <div class="row">
+    <button id="btnInit">Initialize Firebase</button>
+    <button id="btnSignUp">Sign Up</button>
+    <button id="btnSignIn">Sign In</button>
+    <button id="btnSignOut">Sign Out</button>
+  </div>
+
+  <div class="row">
+    <button id="btnToken">Get ID Token</button>
+    <button id="btnCallMe">Call /api/auth/me</button>
+  </div>
+
+  <hr />
+
+  <h3>Users</h3>
+  <div class="row">
+    <button id="btnUsersMeGet">GET /api/users/me</button>
+    <button id="btnUsersMePatch">PATCH /api/users/me (schema_version)</button>
+    <input id="schemaVersion" type="text" placeholder="schema version (e.g. 1.0)" style="width: 240px;" />
+  </div>
+
+  <h3>Measurements</h3>
+  <div class="row">
+    <input id="mSex" placeholder="sex (male/female)" />
+    <input id="mDob" placeholder="dob YYYY-MM-DD" />
+    <input id="mHeight" placeholder="height_cm (number)" />
+    <input id="mWeight" placeholder="weight_kg (number)" />
+    <input id="mBfp" placeholder="body_fat_pct (0-100)" />
+  </div>
+  <div class="row">
+    <button id="btnMeasCreate">POST /api/users/me/measurements</button>
+    <button id="btnMeasList">GET /api/users/me/measurements</button>
+    <button id="btnMeasCurrent">GET /api/users/me/measurements/current</button>
+  </div>
+  <div class="row">
+    <input id="mId" placeholder="measurement id" style="width: 320px;" />
+    <button id="btnMeasGetById">GET /api/users/me/measurements/:id</button>
+    <button id="btnMeasPatchById">PATCH /api/users/me/measurements/:id</button>
+  </div>
+
+  <div class="row">
+    <div class="small">Last ID Token</div>
+    <pre id="tokenOut"></pre>
+  </div>
+
+  <div class="row">
+    <div class="small">Response</div>
+    <pre id="respOut"></pre>
+  </div>
+
+  <div class="row">
+    <div class="small">Action Log</div>
+    <pre id="logOut" style="max-height: 300px;
+overflow-y: auto;"></pre>
+  </div>
+
+  <script type="module" src="/test-client/client.js"></script>
+</body>
+</html>
+
+

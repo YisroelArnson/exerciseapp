@@ -1,117 +1,144 @@
-const http = require('http');
+/**
+ * Test script to:
+ * 1. Create a new user in the Firebase Auth emulator.
+ * 2. Create a Firestore measurements document for that user.
+ * 3. Fetch the most recent measurement doc via the backend API, authenticating as the user (simulating frontend).
+ * 
+ * Run with: node backend/testing/test-auth.js
+ */
 
-const API_BASE = 'http://localhost:3000/api/auth';
+const { getAuth, getFirestore } = require('../firebase/config');
+const fetch = require('node-fetch');
+const { v4: uuidv4 } = require('uuid');
 
-function makeRequest(path, method, data) {
-  return new Promise((resolve, reject) => {
-    const postData = JSON.stringify(data);
-    const options = {
-      hostname: 'localhost',
-      port: 3000,
-      path: `/api/auth${path}`,
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData)
-      }
-    };
+// Helper to generate random user data
+function generateTestUser() {
+  const uid = uuidv4();
+  const email = `testuser_${Date.now()}@example.com`;
+  const password = 'Test1234!';
+  return { uid, email, password };
+}
 
-    const req = http.request(options, (res) => {
-      let responseData = '';
-      res.on('data', (chunk) => {
-        responseData += chunk;
-      });
-      res.on('end', () => {
-        try {
-          const parsed = JSON.parse(responseData);
-          resolve({ status: res.statusCode, data: parsed });
-        } catch (e) {
-          resolve({ status: res.statusCode, data: responseData });
-        }
-      });
-    });
+// Helper to generate random measurement data
+function generateMeasurement() {
+  return {
+    sex: Math.random() > 0.5 ? 'male' : 'female',
+    dob: new Date(Date.now() - Math.floor(Math.random() * 30 * 365 * 24 * 60 * 60 * 1000)).toISOString().slice(0, 10), // random DOB in last 30 years
+    height_cm: Math.floor(Math.random() * 50) + 150, // 150-200cm
+    weight_kg: Math.floor(Math.random() * 50) + 50,  // 50-100kg
+    body_fat_pct: Math.round((Math.random() * 20 + 10) * 10) / 10 // 10-30%
+  };
+}
 
-    req.on('error', (error) => {
-      reject(error);
-    });
-
-    req.write(postData);
-    req.end();
+async function createUserWithEmulator(email, password) {
+  // Use Auth emulator REST API
+  const url = 'http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key';
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      password,
+      returnSecureToken: true
+    })
   });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error ? data.error.message : 'Unknown error');
+  }
+  return data; // contains localId (uid), idToken, etc.
 }
 
-async function testAuth() {
-  console.log('🔍 Testing Authentication API...\n');
-
-  const testEmail = `test${Date.now()}@example.com`;
-  const testPassword = 'testpass123';
-
-  console.log('📧 Test Email:', testEmail);
-  console.log('🔑 Test Password:', testPassword);
-  console.log('');
-
-  // Test Register
-  console.log('📝 Testing Register...');
-  try {
-    const registerResult = await makeRequest('/register', 'POST', {
-      email: testEmail,
-      password: testPassword
-    });
-    
-    console.log('✅ Register Status:', registerResult.status);
-    console.log('✅ Register Response:', JSON.stringify(registerResult.data, null, 2));
-    console.log('');
-  } catch (error) {
-    console.log('❌ Register Error:', error.message);
-    console.log('');
+async function loginUserWithEmulator(email, password) {
+  // Use Auth emulator REST API for signInWithPassword
+  const url = 'http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake-api-key';
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      password,
+      returnSecureToken: true
+    })
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error ? data.error.message : 'Unknown error');
   }
-
-  // Test Login
-  console.log('🔐 Testing Login...');
-  try {
-    const loginResult = await makeRequest('/login', 'POST', {
-      email: testEmail,
-      password: testPassword
-    });
-    
-    console.log('✅ Login Status:', loginResult.status);
-    console.log('✅ Login Response:', JSON.stringify(loginResult.data, null, 2));
-    console.log('');
-  } catch (error) {
-    console.log('❌ Login Error:', error.message);
-    console.log('');
-  }
-
-  // Test with missing fields
-  console.log('🧪 Testing Missing Fields...');
-  try {
-    const missingResult = await makeRequest('/register', 'POST', {
-      email: 'missing@example.com'
-    });
-    
-    console.log('✅ Missing Fields Status:', missingResult.status);
-    console.log('✅ Missing Fields Response:', JSON.stringify(missingResult.data, null, 2));
-    console.log('');
-  } catch (error) {
-    console.log('❌ Missing Fields Error:', error.message);
-    console.log('');
-  }
-
-  console.log('🎉 Tests completed!');
+  return data; // contains idToken, localId, etc.
 }
 
-// Check if server is running first
-const checkServer = http.get('http://localhost:3000', (res) => {
-  console.log('✅ Server is running');
-  testAuth();
-});
+// Simulate a frontend request to fetch the most recent measurement for the user
+async function fetchMostRecentMeasurement(idToken) {
+  // This endpoint should exist in your backend, e.g. /api/measurements/recent or similar
+  // For this example, let's assume you have /api/users/me/measurements/recent
+  // If not, adjust the endpoint accordingly.
+  const url = 'http://localhost:3000/api/users/me/measurements/recent';
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${idToken}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error ? data.error : 'Unknown error');
+  }
+  return data;
+}
 
-checkServer.on('error', (error) => {
-  console.log('❌ Server not running or connection failed');
-  console.log('');
-  console.log('💡 Make sure to start the server first:');
-  console.log('   npm run dev');
-  console.log('');
-  console.log('💡 Or start directly:');
-  console.log('   node server.js');
-});
+async function main() {
+  try {
+    // 1. Generate user data and create user in Auth emulator
+    const user = generateTestUser();
+    console.log('Creating user in Auth emulator:', user.email);
+    const authRes = await createUserWithEmulator(user.email, user.password);
+    const uid = authRes.localId;
+    console.log('User created with UID:', uid);
+
+    // 2. Create a measurement document for this user in Firestore emulator
+    const db = getFirestore();
+    const measurement = generateMeasurement();
+    const tsId = new Date().toISOString().replace(/[:.]/g, '-');
+    const docRef = db.collection('users').doc(uid).collection('measurements').doc(tsId);
+
+    await docRef.set({
+      ...measurement,
+      createdAt: new Date()
+    });
+
+    console.log('Measurement document created for user:', {
+      uid,
+      measurementId: tsId,
+      ...measurement
+    });
+
+    // 3. Optionally, fetch and print the measurement back directly from Firestore
+    const snap = await docRef.get();
+    if (snap.exists) {
+      console.log('Fetched measurement from Firestore:', snap.data());
+    } else {
+      console.error('Failed to fetch measurement document');
+    }
+
+    // 4. Simulate frontend: login to get idToken, then fetch most recent measurement via backend API
+    const loginRes = await loginUserWithEmulator(user.email, user.password);
+    const idToken = loginRes.idToken;
+    console.log('Obtained idToken for user:', user.email);
+
+    // Fetch most recent measurement via backend API (auth required)
+    try {
+      const recentMeasurement = await fetchMostRecentMeasurement(idToken);
+      console.log('Fetched most recent measurement via backend API:', recentMeasurement);
+    } catch (apiErr) {
+      console.error('Failed to fetch most recent measurement via backend API:', apiErr.message);
+    }
+  } catch (err) {
+    console.error('Test failed:', err);
+  }
+}
+
+if (require.main === module) {
+  main();
+}
